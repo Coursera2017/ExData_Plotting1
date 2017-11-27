@@ -1,0 +1,19 @@
+## Loading the data
+AllData = read.table('./DataFile/household_power_consumption.txt',skip=1, sep=';', na.strings="?")
+names(AllData) <- c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3")
+Data <- subset(AllData,AllData$Date=="1/2/2007" | AllData$Date =="2/2/2007")
+
+Data$Date <- as.Date(Data$Date, format="%d/%m/%Y")
+DateTime <- paste(as.Date(Data$Date), Data$Time)
+Data$Datetime <- as.POSIXct(DateTime)
+
+# Plot 3
+with(Data, {
+        plot(Sub_metering_1~Datetime, type="l", xlab="", ylab="Global Active Power (kilowatts)")
+        lines(Sub_metering_2~Datetime,col='Red')
+        lines(Sub_metering_3~Datetime,col='Blue')
+})
+legend("topright", lty=1, col=c("black", "red", "blue"), lwd=2, legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+dev.copy(png, file="plot3.png", height=480, width=480)
+dev.off()
+title(main="Energy sub-metering")
